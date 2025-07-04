@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Thêm thiết bị</title>
-</head>
-<body>
-    <h1>Thêm thiết bị</h1>
-    <form method="post">
-        Tên thiết bị: <input type="text" name="name"><br>
-        Đơn vị quản lý: <input type="text" name="don_vi_quan_ly"><br>
-        Tên vị trí: <input type="text" name="vi_tri"><br>
-        Tình trạng thiết bị:
-        <select name="trang_thai">
-            <option value="Hoạt động tốt">Hoạt động tốt</option>
+{% extends "layout.html" %}
+{% block title %}Thêm thiết bị{% endblock %}
+{% block content %}
+<h2>Thêm thiết bị</h2>
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">Tên thiết bị</label>
+        <input type="text" name="name" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Hệ thống</label>
+        <input type="text" name="system" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Trạng thái</label>
+        <select name="status" class="form-select">
+            <option value="Bình thường">Bình thường</option>
             <option value="Sự cố">Sự cố</option>
-        </select><br>
-        Ngày phát hiện sự cố: <input type="date" name="ngay_phat_hien_su_co"><br>
-        Tiến độ khắc phục sự cố:
-        <select name="tien_do_khac_phuc">
-            <option value="">--</option>
-            <option value="Đã lập biên bản">Đã lập biên bản</option>
-            <option value="Lập hồ sơ khắc phục">Lập hồ sơ khắc phục</option>
-            <option value="Kết thúc sự cố">Kết thúc sự cố</option>
-        </select><br>
-        Ghi chú: <input type="text" name="ghi_chu"><br>
-        <input type="submit" value="Lưu">
-    </form>
-</body>
-</html>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Lưu</button>
+</form>
+{% endblock %}

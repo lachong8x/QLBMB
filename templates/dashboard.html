@@ -1,32 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-</head>
-<body>
-    <h1>Danh sách thiết bị</h1>
-    <a href="{{ url_for('add_device') }}">Thêm thiết bị</a>
-    <table border="1">
+{% extends "layout.html" %}
+{% block title %}Bảng điều khiển{% endblock %}
+{% block content %}
+<h2>Danh sách thiết bị</h2>
+<a class="btn btn-success mb-3" href="/add_device">Thêm thiết bị</a>
+<table class="table table-bordered">
+    <thead><tr><th>Tên thiết bị</th><th>Hệ thống</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody>
+    {% for device in devices %}
         <tr>
-            <th>Tên thiết bị</th>
-            <th>Đơn vị quản lý</th>
-            <th>Vị trí</th>
-            <th>Trạng thái</th>
-            <th>Ngày phát hiện sự cố</th>
-            <th>Tiến độ khắc phục sự cố</th>
-            <th>Ghi chú</th>
+            <td>{{ device.name }}</td>
+            <td>{{ device.system }}</td>
+            <td>{{ device.status }}</td>
+            <td>
+                <a class="btn btn-sm btn-primary" href="/edit_device/{{ device.id }}">Sửa</a>
+                <a class="btn btn-sm btn-danger" href="/delete_device/{{ device.id }}">Xoá</a>
+            </td>
         </tr>
-        {% for device in devices %}
-        <tr>
-            <td>{{ device['name'] }}</td>
-            <td>{{ device['don_vi_quan_ly'] }}</td>
-            <td>{{ device['vi_tri'] }}</td>
-            <td>{{ device['trang_thai'] }}</td>
-            <td>{{ device['ngay_phat_hien_su_co'] or '' }}</td>
-            <td>{{ device['tien_do_khac_phuc'] or '' }}</td>
-            <td>{{ device['ghi_chu'] or '' }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
