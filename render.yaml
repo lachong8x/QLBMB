@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: qltb-koc6
-    env: python
-    startCommand: "gunicorn wsgi:app"
-    envVars:
-      - key: PORT
-        value: 10000
