@@ -1,36 +1,36 @@
 import sqlite3
 
+# Kết nối (nếu chưa có file sẽ tự tạo)
 conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
 
+# Xoá bảng nếu đã tồn tại để tránh lỗi khi chạy lại nhiều lần (có thể bỏ nếu muốn giữ dữ liệu cũ)
+cursor.execute("DROP TABLE IF EXISTS devices")
+
+# Tạo bảng devices
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS devices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    don_vi_quan_ly TEXT,
-    vi_tri TEXT,
-    trang_thai TEXT CHECK(trang_thai IN ('Hoạt động tốt', 'Sự cố')),
-    ngay_phat_hien_su_co TEXT,
-    tien_do_khac_phuc TEXT,
-    ghi_chu TEXT,
-    ngay_ket_thuc_su_co TEXT
-)
+    CREATE TABLE devices (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        system TEXT NOT NULL,
+        status TEXT NOT NULL
+    )
 ''')
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    device_id INTEGER,
-    trang_thai TEXT,
-    thoi_gian TEXT,
-    FOREIGN KEY(device_id) REFERENCES devices(id)
-)
-''')
+# Thêm dữ liệu mẫu
+sample_data = [
+    ('Thiết bị A', 'Windows', 'Online'),
+    ('Thiết bị B', 'Linux', 'Offline'),
+    ('Thiết bị C', 'macOS', 'Online')
+]
 
-cursor.execute("DELETE FROM devices")
+cursor.executemany('''
+    INSERT INTO devices (name, system, status)
+    VALUES (?, ?, ?)
+''', sample_data)
 
-cursor.execute("INSERT INTO devices (name, don_vi_quan_ly, vi_tri, trang_thai) VALUES ('Thiết bị A', 'Phòng CNTT', 'Tầng 1', 'Hoạt động tốt')")
-cursor.execute("INSERT INTO devices (name, don_vi_quan_ly, vi_tri, trang_thai, ngay_phat_hien_su_co, tien_do_khac_phuc, ghi_chu) VALUES ('Thiết bị B', 'Phòng KT', 'Tầng 2', 'Sự cố', '2025-07-01', 'Đã lập biên bản', 'Mất nguồn')")
+# Lưu thay đổi và đóng kết nối
 conn.commit()
 conn.close()
-print("Initialized database with sample data.")
+
+print("✅ Database initialized and sample data inserted.")

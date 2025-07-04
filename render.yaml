@@ -1,6 +1,8 @@
 services:
   - type: web
-    name: qltb
+    name: qltb-koc6
     env: python
-    buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn wsgi:app"
+    envVars:
+      - key: PORT
+        value: 10000
