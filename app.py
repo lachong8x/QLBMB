@@ -21,3 +21,23 @@ def login():
         else:
             return 'Sai tài khoản hoặc mật khẩu'
     return render_template('login.html')
+
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    import sqlite3
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, system, status FROM devices")
+    rows = cursor.fetchall()
+    conn.close()
+
+    devices = [
+        {'id': row[0], 'name': row[1], 'system': row[2], 'status': row[3]}
+        for row in rows
+    ]
+
+    return render_template('dashboard.html', devices=devices)
