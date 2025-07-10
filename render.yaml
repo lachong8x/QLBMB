@@ -1,9 +1,6 @@
 services:
   - type: web
-    name: qltb-koc6
+    name: qltb-dashboard
     env: python
-    plan: free
-    buildCommand: |
-      pip install -r requirements.txt
-      python init_db.py
-    startCommand: gunicorn wsgi:app
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn wsgi:app"

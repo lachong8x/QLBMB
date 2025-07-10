@@ -1,43 +1,38 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+
+from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key_123'  # Bạn có thể đổi thành chuỗi bất kỳ
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.route('/')
-def home():
-    if 'user' in session:
-        return render_template('index.html', user=session['user'])
-    return render_template('index.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        # Ở đây bạn có thể kiểm tra username/password
-        if username == 'admin' and password == '123456':
-            session['user'] = username
-            return redirect(url_for('home'))
-        else:
-            return 'Sai tài khoản hoặc mật khẩu'
-    return render_template('login.html')
-
+def index():
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
 def dashboard():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-
-    import sqlite3
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, name, system, status FROM devices")
-    rows = cursor.fetchall()
+    conn = get_db_connection()
+    devices = conn.execute('SELECT * FROM devices').fetchall()
     conn.close()
-
-    devices = [
-        {'id': row[0], 'name': row[1], 'system': row[2], 'status': row[3]}
-        for row in rows
-    ]
-
     return render_template('dashboard.html', devices=devices)
+
+@app.route('/add', methods=['GET', 'POST'])
+def add_device():
+    if request.method == 'POST':
+        name = request.form['name']
+        system = request.form['system']
+        status = request.form['status']
+        error_date = request.form.get('error_date')
+        progress = request.form.get('progress')
+
+        conn = get_db_connection()
+        conn.execute('INSERT INTO devices (name, system, status, error_date, progress) VALUES (?, ?, ?, ?, ?)', 
+                     (name, system, status, error_date, progress))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('dashboard'))
+    return render_template('add_device.html')

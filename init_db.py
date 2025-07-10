@@ -1,36 +1,26 @@
+
 import sqlite3
 
-# Kết nối (nếu chưa có file sẽ tự tạo)
 conn = sqlite3.connect('database.db')
-cursor = conn.cursor()
-
-# Xoá bảng nếu đã tồn tại để tránh lỗi khi chạy lại nhiều lần (có thể bỏ nếu muốn giữ dữ liệu cũ)
-cursor.execute("DROP TABLE IF EXISTS devices")
-
-# Tạo bảng devices
-cursor.execute('''
+conn.execute('DROP TABLE IF EXISTS devices')
+conn.execute('''
     CREATE TABLE devices (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         system TEXT NOT NULL,
-        status TEXT NOT NULL
+        status TEXT NOT NULL,
+        error_date TEXT,
+        progress TEXT
     )
 ''')
 
-# Thêm dữ liệu mẫu
 sample_data = [
-    ('Thiết bị A', 'Windows', 'Online'),
-    ('Thiết bị B', 'Linux', 'Offline'),
-    ('Thiết bị C', 'macOS', 'Online')
+    ('Thiết bị A', 'Windows', 'Online', '', ''),
+    ('Thiết bị B', 'Linux', 'Offline', '', ''),
+    ('Thiết bị C', 'macOS', 'Online', '', '')
 ]
 
-cursor.executemany('''
-    INSERT INTO devices (name, system, status)
-    VALUES (?, ?, ?)
-''', sample_data)
-
-# Lưu thay đổi và đóng kết nối
+conn.executemany('INSERT INTO devices (name, system, status, error_date, progress) VALUES (?, ?, ?, ?, ?)', sample_data)
 conn.commit()
 conn.close()
-
-print("✅ Database initialized and sample data inserted.")
+print("Initialized database with sample data.")
